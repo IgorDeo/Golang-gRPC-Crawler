@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 
 	"google.golang.org/grpc"
 
@@ -18,7 +19,7 @@ var (
 	certFile   = flag.String("cert_file", "", "The TLS cert file")
 	keyFile    = flag.String("key_file", "", "The TLS key file")
 	jsonDBFile = flag.String("json_db_file", "", "A json file containing a list of features")
-	port       = flag.Int("port", 50051, "The server port")
+	port       = flag.Int("port", 8000, "The server port")
 )
 
 type instagramServer struct {
@@ -27,7 +28,7 @@ type instagramServer struct {
 
 func (s *instagramServer) GetFollowersInfo(ctx context.Context, in *pb.GetFollowersInfoRequest) (*pb.GetFollowersInfoResponse, error) {
 	username := in.Username
-	fmt.Println("GetFollowersInfo for username: ", username)
+	log.Print("GetFollowersInfo for username: ", username)
 
 	profile, error := crawler.InstagramCrawlerFactory().GetProfileInfo(username)
 
@@ -40,8 +41,9 @@ func newServer() *instagramServer {
 }
 
 func main() {
+	log.SetOutput(os.Stdout)
 	flag.Parse()
-	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", *port))
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -59,7 +61,8 @@ func main() {
 	// 	}
 	// 	opts = []grpc.ServerOption{grpc.Creds(creds)}
 	// }
-	fmt.Print("Starting server on port ", *port)
+	log.Print("Starting server on port ", *port)
+
 	grpcServer := grpc.NewServer(opts...)
 	pb.RegisterInstagramServer(grpcServer, newServer())
 	grpcServer.Serve(lis)

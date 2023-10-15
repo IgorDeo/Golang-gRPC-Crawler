@@ -1,6 +1,6 @@
 package crawler
 
-import "fmt"
+import "log"
 
 type instagramCrawler struct {
 	parser InstagramParser
@@ -20,7 +20,7 @@ func (s *instagramCrawler) GetProfileInfo(username string) (InstagramProfileInfo
 
 	parsed_response, error := s.parser.ParseProfileInfo(response)
 
-	fmt.Print(parsed_response)
+	log.Print(parsed_response)
 
 	return parsed_response, error
 }
