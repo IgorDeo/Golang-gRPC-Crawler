@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+
+option go_package = "grpccrawler/grpccrawler/instagram";
+
+
+package instagram;
+
+
+
+service Instagram{
+    // rpc GetProfile(GetProfileRequest) returns (GetProfileResponse);
+    rpc GetFollowersInfo(GetFollowersInfoRequest) returns (GetFollowersInfoResponse);
+
+
+    
+}
+message GetFollowersInfoRequest{
+    string username = 1;
+}
+
+message GetFollowersInfoResponse{
+    string username = 1;
+    int32 followers = 2;
+    int32 following = 3;
+}
